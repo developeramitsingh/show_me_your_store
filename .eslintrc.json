@@ -1,0 +1,24 @@
+{
+    "root": true,
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:prettier/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
+    "rules": {
+      "@typescript-eslint/no-explicit-any": ["off"], 
+      "no-any": 0,
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "no-null-keyword": 0,
+      // "no-parameter-reassignment": 1,
+      "newline-before-return": 1,
+      "@typescript-eslint/no-var-requires": 0,
+      "@typescript-eslint/camelcase": ["off", {"properties": "never"}],
+      "consistent-this":"off",
+      "@typescript-eslint/interface-name-prefix": "off",
+      "import/extensions": 0
+    }
+}

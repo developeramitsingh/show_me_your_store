@@ -1,0 +1,3 @@
+jwt:
+  jwtSecret: 'df31ddfhdqqfhdh262ndh1jsdjh4'
+  jwtSessionTimeout: '3h'
