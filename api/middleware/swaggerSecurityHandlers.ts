@@ -1,5 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 import config from '../../config';
+import Constant from '../constant/constant';
 
 export const JWT = async(request: any, response: any, next: any) => {
 	try {
@@ -13,19 +14,23 @@ export const JWT = async(request: any, response: any, next: any) => {
 
 const decodeJWT = async (request: any, response: any) => {
 	console.log('Decode and verify JWT token');
-	const cookieName: string = 'token';
-	const token = request.cookies[cookieName] 
-		? request.cookies[cookieName]
-		: request.headers.authorization &&
-		  request.headers.authorization.split(' ')[1];
-  	if(!token) {
-  		throw new Error('JWT is required');
-  	}
-  	let secret: any = getSecret(request);
+	try {
+		const cookieName: string = 'token';
+		const token = request.cookies[cookieName] 
+			? request.cookies[cookieName]
+			: request.headers.authorization &&
+			request.headers.authorization.split(' ')[1];
+		if(!token) {
+			throw new Error('JWT is required');
+		}
+		let secret: any = getSecret(request);
 
-  	request.user = await jwt.verify(token, secret);
+		request.user = await jwt.verify(token, secret);
 
-  	return request.user;
+		return request.user;
+	} catch (err) {
+		console.error(`error in decodeJWT: ${err}`);
+	}
 }
 
 const getSecret = (request: any) => {
@@ -36,10 +41,30 @@ const getSecret = (request: any) => {
 	}
 }
 
-const getUserRole = (user: any) => {
-	if (user && user.roles && user.roles.roleKey) {
-		return user.roles.roleKey;
-	} else {
-		return null;
+export const allowOnlySA = async (request: any, response: any, next: any) => {
+	try {
+	  console.info('api access check: allow only SA');
+  
+	  const user = await decodeJWT(request, response);
+	  const userRole = getUserRole(user);
+	  if (!userRole) {
+		throw new Error();
+	  }
+  
+	  if (userRole === Constant.ROLES.SA) {
+		next();
+	  } else {
+		throw new Error('User not allowed');
+	  }
+	} catch (error) {
+	  next(error);
 	}
-}
+  };
+
+  function getUserRole(user: any) {
+	if (user && user.roles && user.roles.roleKey) {
+	  return user.roles.roleKey;
+	} else {
+	  return null;
+	}
+  }

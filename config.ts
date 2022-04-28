@@ -8,7 +8,11 @@ const config: any = {
   jwt: {
     jwtSecret: '',
     jwtSessionTimeout: '',
-  }
+  },
+  algorithms: {
+    RSA: ['RS256'],
+    HMAC: ['HS256'],
+  },
 };
 
 const initConfig = (): any => {
@@ -19,7 +23,7 @@ const initConfig = (): any => {
   const env = process.env.NODE_ENV || 'development';
   const configFile = path.join(__dirname, 'config', 'environment', `${env}.yaml`);
 
-  const envConfig = yaml.safeLoad(fs.readFileSync(configFile, { encoding: 'utf8', flag:'r' }));
+  const envConfig = yaml.load(fs.readFileSync(configFile, { encoding: 'utf8', flag:'r' }));
   _.merge(config, envConfig);
 
   return config;
