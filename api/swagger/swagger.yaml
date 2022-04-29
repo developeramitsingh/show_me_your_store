@@ -14,45 +14,56 @@ schemes:
 # format of bodies a client can send (Content-Type)
 consumes:
   - application/json
+  - multipart/form-data
+  - application/x-www-form-urlencoded
+  - application/octet-stream
+  - application/javascript
 # format of the responses to the client (Accepts)
 produces:
   - application/json
+
+securityDefinitions:
+  allowOnlySA:
+    name: Authorization
+    type: apiKey
+    in: header
 paths:
-  /hello:
+  /store:
     # binds a127 app logic to a route
-    x-swagger-router-controller: hello_world
-    get:
-      description: Returns 'Hello' to the caller
+    x-swagger-router-controller: stores.controller
+    post:
+      description: create a new store
       # used as the method name of the controller
-      operationId: hello
+      operationId: createStore
       parameters:
-        - name: name
-          in: query
-          description: The name of the person to whom to say hello
-          required: false
-          type: string
+        - in: body
+          name: body
+          description: new store details.
+          required: true
+          schema:
+            $ref: "#/definitions/StoreRequest"
       responses:
-        "200":
-          description: Success
+        "201":
+          description: Success creation
           schema:
             # a pointer to a definition
-            $ref: "#/definitions/HelloWorldResponse"
+            type: object
         # responses may fall through to errors
         default:
           description: Error
           schema:
-            $ref: "#/definitions/ErrorResponse"
+            $ref: "#/definitions/Error"
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
-  HelloWorldResponse:
+  StoreRequest:
     required:
-      - message
+      - storeName
     properties:
-      message:
+      storeName:
         type: string
-  ErrorResponse:
+  Error:
     required:
       - message
     properties:

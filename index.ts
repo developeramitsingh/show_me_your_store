@@ -20,7 +20,7 @@ async function start(): Promise<any> {
     const PORT: number = parseInt(process.env.PORT as string, 10);
   
     app.listen(PORT, () => {
-      console.info(`Server started at port: ${PORT}`);
+      console.info(`Server started at http://localhost:${PORT}`);
     });
 }
   
