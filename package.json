@@ -44,10 +44,10 @@
   },
   "scripts": {
     "build": "tsc",
-    "prebuild": "rm -rf ./build",
-    "postbuild": "cp -r api/swagger build/api && cp -r config build",
     "lint": "eslint api/**/*.ts",
     "lintfix": "eslint api/**/*.ts fix",
-    "dev": "swagger-cli validate api/swagger/swagger.yaml && npm run build && NODE_ENV=development tsc-watch --project . --onSuccess \"node ./build\""
+    "prebuild": "rmdir /s /q \"build\"",
+    "postbuild": "Xcopy /E /I \"api/swagger\" \"build/api/swagger\" && Xcopy /E /I \"config\" \"build/config\"",
+    "dev": "npm run build && swagger-cli validate \"./build/api/swagger/swagger.yaml\" && tsc-watch --project . --onSuccess \"node ./build\""
   }
 }
