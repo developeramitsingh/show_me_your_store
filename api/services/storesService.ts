@@ -34,7 +34,7 @@ class StoresService {
         }
     }
 
-    public async getAllStoreByQuery(query: any, attrib: string | string[]): Promise<IStores[] | any>{
+    public async getAllStoreByQuery(query: any, attrib?: string | string[]): Promise<IStores[] | any>{
         try {
             return await Stores.find(query, attrib).exec();
         } catch (err) {

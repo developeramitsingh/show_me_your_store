@@ -11,8 +11,8 @@ export interface IStores {
     isActive: boolean;
     longitude: Types.Decimal128;
     latitude: Types.Decimal128;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
 }
 
 const storesSchema = new Schema <IStores> ({
@@ -56,7 +56,7 @@ const storesSchema = new Schema <IStores> ({
     },
     isActive: {
         "type": "boolean",
-        "defaultValue": true,
+        "default": true,
         "description": "",
         "index": 0,
     },
@@ -69,16 +69,14 @@ const storesSchema = new Schema <IStores> ({
         "description": "",
     },
     createdAt: {
-        "type": "Date",
+        "type": "String",
         "required": false,
-        "defaultValue": "timestamp",
         "description": "",
         "index": 0,
     },
     updatedAt: {
-        "type": "Date",
+        "type": "String",
         "required": false,
-        "defaultValue": "timestamp",
         "description": "",
         "index": 0,
     }

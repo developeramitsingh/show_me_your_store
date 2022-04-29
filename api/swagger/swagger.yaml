@@ -53,6 +53,41 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/Error"
+    get:
+      description: get all store data
+      operationId: getAllStoreData
+      responses:
+        "201":
+          description: Success get all store data
+          schema:
+            # a pointer to a definition
+            type: object
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
+    put: 
+      description: update store data 
+      operationId: updateStoreData 
+      parameters:
+        - in: body
+          name: body
+          description: update store details.
+          required: true
+          schema:
+            $ref: "#/definitions/StorePutRequest"
+      responses:
+        "201":
+          description: Success creation
+          schema:
+            # a pointer to a definition
+            type: object
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"     
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -69,3 +104,34 @@ definitions:
     properties:
       message:
         type: string
+
+  StorePutRequest: 
+    required:
+      - id
+    properties:
+      storeName: 
+        type: string
+      id :
+        type : string  
+      storeType: 
+        type: string
+      storeCategory: 
+        type: string
+      storeAddress: 
+        type : string
+      storePincode: 
+        type : number
+      storeState: 
+        type: string
+      storeCity: 
+        type : string
+      isActive: 
+        type : boolean
+      longitude: 
+        type : number
+      latitude: 
+        type : number
+      createdAt:
+        type : string
+      updatedAt : 
+        type : string           
