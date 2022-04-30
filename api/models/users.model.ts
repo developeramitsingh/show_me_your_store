@@ -14,10 +14,7 @@ export interface IUsers {
 }
 
 const usersSchema = new Schema <IUsers> ({
-    roleId: {
-        type: String,
-        description: "role id of user from roles table",
-    },
+    roleId: { type: Schema.Types.ObjectId, ref: 'Roles' },
     userName: {
         type: String,
         description: "user's name",

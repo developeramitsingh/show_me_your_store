@@ -38,6 +38,14 @@ class UsersService {
         }
     }
 
+    public async getUserAndRoleByQuery(query?: any, attrib?: string | string[]): Promise<IUsers | any>{
+        try {
+            return await Users.findOne(query, attrib).populate('roleId','roleKey');
+        } catch (err) {
+            console.error(`error in updateStoreByQuery: ${err}`);
+        }
+    }
+
     public async getAllUserByQuery(query: any, attrib?: string | string[]): Promise<IUsers[] | any>{
         try {
             return await Users.find(query, attrib).exec();

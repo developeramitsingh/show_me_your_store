@@ -103,7 +103,44 @@ paths:
         default:
           description: Error
           schema:
-            $ref: "#/definitions/Error" 
+            $ref: "#/definitions/Error"
+  /login:
+    x-swagger-router-controller: loginManagement.controller
+    post:
+      description: user login
+      # used as the method name of the controller
+      operationId: userLogin
+      parameters:
+        - in: body
+          name: body
+          description: user login details.
+          required: true
+          schema:
+            type: object
+            required:
+              - mobile
+              - password
+            properties:
+              mobile:
+                type: string
+                maxLength: 256
+                minLength: 4
+              password:
+                type: string
+                maxLength: 256
+                minLength: 4
+      responses:
+        "201":
+          description: Success login
+          schema:
+            # a pointer to a definition
+            type: object
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
+
                   
   /swagger:
     x-swagger-pipe: swagger_raw
