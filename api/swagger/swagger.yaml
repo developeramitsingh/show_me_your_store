@@ -87,7 +87,24 @@ paths:
         default:
           description: Error
           schema:
-            $ref: "#/definitions/Error"     
+            $ref: "#/definitions/Error"
+  /users:
+    x-swagger-router-controller: users.controller
+    get:
+      description: get all active user data
+      operationId: getAllUserData
+      responses:
+        "201":
+          description: Success get all active user data
+          schema:
+            # a pointer to a definition
+            type: object
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error" 
+                  
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
