@@ -69,7 +69,7 @@ paths:
             $ref: "#/definitions/Error"
     put: 
       description: update store data 
-      operationId: updateStoreData 
+      operationId: updateStoreData
       parameters:
         - in: body
           name: body
