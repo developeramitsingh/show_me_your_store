@@ -8,7 +8,7 @@ import { IRoles} from "../models/roles.model";
 export const checkRoleAndUserExistOrNot = async () => {
 	try{
 		let rolesData = await rolesService.getRoleByQuery({roleKey: Constant.ROLES.SA});
-		logInConsole(rolesData);
+		logInConsole({ isSARoleExist: rolesData ? true : false});
 		if(!rolesData){
             const data:IRoles = {
                roleName : "Super Admin",
@@ -21,7 +21,7 @@ export const checkRoleAndUserExistOrNot = async () => {
 		}
 
 		let userData = await usersService.getUserByQuery();
-		logInConsole(userData);
+		logInConsole({ isSAUser: userData ? true : false});
 		if(!userData){
 			const userCreateData:IUsers = {
 				roleId    : rolesData._id,

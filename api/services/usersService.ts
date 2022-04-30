@@ -1,5 +1,6 @@
 import { IUsers, Users } from "../models/users.model";
 import {Types} from "mongoose";
+import * as bcrypt from "bcrypt";
 
 class UsersService {
     private constructor () {}
@@ -14,6 +15,9 @@ class UsersService {
     }
 
     public async createUser(data: IUsers): Promise<any> {
+        if (data.password) {
+            data.password = bcrypt.hashSync(data.password, 10);
+        }
         const newStore = new Users(data);
         return newStore.save();
     };

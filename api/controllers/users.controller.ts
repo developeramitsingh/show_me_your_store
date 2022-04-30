@@ -1,5 +1,4 @@
 import { usersService } from "../services";
-import { logInConsole } from "../utils/utils";
 
 export const getAllUserData = async(request,response,next) => {
     try{
