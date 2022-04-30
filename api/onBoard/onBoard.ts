@@ -4,6 +4,7 @@ import Constant from '../constant/constant';
 import {logInConsole} from '../utils/utils';
 import { IUsers} from "../models/users.model";
 import { IRoles} from "../models/roles.model";
+import storeService from "../services/storesService";
 
 export const checkRoleAndUserExistOrNot = async () => {
 	try{
@@ -22,6 +23,7 @@ export const checkRoleAndUserExistOrNot = async () => {
 
 		let userData = await usersService.getUserByQuery();
 		logInConsole({ isSAUser: userData ? true : false});
+
 		if(!userData){
 			const userCreateData:IUsers = {
 				roleId    : rolesData._id,

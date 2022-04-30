@@ -48,7 +48,7 @@ class UsersService {
 
     public async getAllUserByQuery(query: any, attrib?: string | string[]): Promise<IUsers[] | any>{
         try {
-            return await Users.find(query, attrib).exec();
+            return await Users.find(query, attrib).populate('stores', 'storeName').populate('roleId', 'roleKey').exec();
         } catch (err) {
             console.error(`error in updateStoreByQuery: ${err}`);
         }

@@ -2,6 +2,7 @@ import { Schema, model, Types } from 'mongoose';
 export interface IUsers {
     _id?: Types.ObjectId;
     roleId?: string;
+    stores?: string;
     userName?: string;
     email?: string;
     mobile?: string;
@@ -15,6 +16,7 @@ export interface IUsers {
 
 const usersSchema = new Schema <IUsers> ({
     roleId: { type: Schema.Types.ObjectId, ref: 'Roles' },
+    stores: [{ type: Schema.Types.ObjectId, ref: 'Stores' }],
     userName: {
         type: String,
         description: "user's name",

@@ -1,11 +1,17 @@
 import { usersService } from "../services";
+import { logInConsole } from "../utils/utils";
 
-export const getAllUserData = async(request,response,next) => {
+export const getAllUserData = async(request, response, next) => {
     try{
 
-        const getAllUserData = await usersService.getAllUserByQuery({isActive:1});
-        return response.status(200).send({success:true, data:getAllUserData});
+        let allUserData = await usersService.getAllUserByQuery({isActive:1});
+        allUserData = JSON.parse(JSON.stringify(allUserData));
+        
+        for (const user of allUserData) {
+            delete user.password;
+        }
 
+        return response.status(200).send({success:true, data: allUserData});
     } catch(err){
         console.error('error in get all active users data ->' ,err);
         next(err);

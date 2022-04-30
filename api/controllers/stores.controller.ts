@@ -11,7 +11,8 @@ export const createStore = async (request, response, next) => {
         }
 
         data = JSON.parse(JSON.stringify(data));
-        console.info(data);
+
+        delete data._id;
        const newStore = await storesService.createStore(data);
         logInConsole(newStore);
 
