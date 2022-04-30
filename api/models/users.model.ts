@@ -1,16 +1,16 @@
 import { Schema, model, Types } from 'mongoose';
 export interface IUsers {
-    _id: Types.ObjectId;
-    roleId: string;
-    userName: string;
-    email: string;
-    mobile: string;
-    password: string;
-    isActive: boolean;
-    failedAttempts: number;
-    profileImg: string;
-    createdAt: Date;
-    updatedAt: Date;
+    _id?: Types.ObjectId;
+    roleId?: string;
+    userName?: string;
+    email?: string;
+    mobile?: string;
+    password?: string;
+    isActive?: boolean;
+    failedAttempts?: number;
+    profileImg?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 const usersSchema = new Schema <IUsers> ({
@@ -37,6 +37,7 @@ const usersSchema = new Schema <IUsers> ({
     },
     isActive: {
         type: Boolean,
+        default:true,
         description: "active or not",
     },
     failedAttempts: {

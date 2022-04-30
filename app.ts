@@ -9,8 +9,7 @@ import expressJWT from 'express-jwt';
 import { initConfig } from './config';
 import { connect } from 'mongoose';
 import * as dotenv from 'dotenv';
-import { AutoEncryptionLoggerLevel } from 'mongodb';
-
+import {checkRoleAndUserExistOrNot} from './api/onBoard/onBoard';
 export default class App {
   private app: express.Application;
   private config: any;
@@ -82,6 +81,7 @@ export default class App {
       console.info('Initializing database...');
       await connect(mongoUri);
       console.info('Initialized database.');
+      checkRoleAndUserExistOrNot();
     } catch(err) {
       console.error(err);
     }

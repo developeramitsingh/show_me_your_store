@@ -26,7 +26,7 @@ class RolesService {
         }
     }
 
-    public async getRoleByQuery(query: any, attrib: string | string[]): Promise<IRoles | any>{
+    public async getRoleByQuery(query: any, attrib?: string | string[]): Promise<IRoles | any>{
         try {
             return await Roles.findOne(query, attrib);
         } catch (err) {

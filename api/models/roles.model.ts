@@ -1,12 +1,12 @@
 import { Schema, model, Types } from 'mongoose';
 export interface IRoles {
-    _id: Types.ObjectId;
-    roleName: string;
-    roleKey: string;
-    roleDesc: string;
-    isActive: boolean;
-    createdAt: Date;
-    updatedAt: Date;
+    _id?: Types.ObjectId;
+    roleName?: string;
+    roleKey?: string;
+    roleDesc?: string;
+    isActive?: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 const rolesSchema = new Schema <IRoles> ({
@@ -29,6 +29,7 @@ const rolesSchema = new Schema <IRoles> ({
     },
     isActive: {
         type: Boolean,
+        default:true,
         description: "active or not",
     },
     createdAt: {
