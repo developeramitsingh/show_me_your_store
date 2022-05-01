@@ -18,7 +18,7 @@ class StoresService {
         return newStore.save();
     };
 
-    public async getStoreById(id: Types.ObjectId, attrib: string | string[]): Promise<IStores | any>{
+    public async getStoreById(id: Types.ObjectId, attrib?: string | string[]): Promise<IStores | any>{
         try {
             return await Stores.findOne({ _id: id}, attrib);
         } catch (err) {
@@ -26,7 +26,7 @@ class StoresService {
         }
     }
 
-    public async getStoreByQuery(query: any, attrib: string | string[]): Promise<IStores | any>{
+    public async getStoreByQuery(query?: any, attrib?: string | string[]): Promise<IStores | any>{
         try {
             return await Stores.findOne(query, attrib);
         } catch (err) {

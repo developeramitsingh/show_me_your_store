@@ -88,6 +88,28 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/Error"
+  /store/{id}:
+    x-swagger-router-controller: stores.controller 
+    get:
+      description: get store details by id
+      operationId: getStoreDetailsById
+      parameters:
+        - name: id
+          in: path
+          description: Id of the store
+          required: true
+          type: string
+      responses:
+        "201":
+          description: Success user details by id
+          schema:
+            # a pointer to a definition
+            type: object
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"        
   /users:
     x-swagger-router-controller: users.controller
     get:
@@ -104,6 +126,75 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/Error"
+    put:
+      description: user update
+        # used as the method name of the controller
+      operationId: updateUserData
+      parameters:
+        - in: body
+          name: body
+          description: user update details.
+          required: true
+          schema:
+            type: object
+            required:
+              - id
+            properties:
+              id:
+                type: string
+              roleId:
+                type: string
+              roleKey:
+                type: string
+              stores:
+                type: string
+              userName:
+                type: string
+              email:
+                type: string
+                minLength: 1
+                pattern: ^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$
+              mobile:
+                type: string
+                maxLength: 256
+                minLength: 4
+              password:
+                type: string
+                maxLength: 256
+                minLength: 4
+      responses:
+        "201":
+          description: Success user update
+          schema:
+            # a pointer to a definition
+            type: object
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
+  /users/{id}:
+    x-swagger-router-controller: users.controller 
+    get:
+      description: get user details by id
+      operationId: getUserDetailsById
+      parameters:
+        - name: id
+          in: path
+          description: Id of the users
+          required: true
+          type: string
+      responses:
+        "201":
+          description: Success user details by id
+          schema:
+            # a pointer to a definition
+            type: object
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"                               
   /login:
     x-swagger-router-controller: loginManagement.controller
     post:
@@ -193,8 +284,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/Error"          
-
-                  
+    
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions

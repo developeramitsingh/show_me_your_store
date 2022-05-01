@@ -56,7 +56,7 @@ class UsersService {
 
     public async updateUserByQuery(data: IUsers, query: any): Promise<any> {
         try {
-            await Users.updateOne(query, data);
+           return await Users.updateOne(query, data);
         } catch (err) {
             console.error(`error in updateStoreByQuery: ${err}`);
         }

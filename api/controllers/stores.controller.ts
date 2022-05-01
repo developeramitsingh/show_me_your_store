@@ -1,5 +1,6 @@
 import { storesService } from "../services";
 import { logInConsole } from "../utils/utils";
+import {Types} from "mongoose";
 
 export const createStore = async (request, response, next) => {
     const requestBody: any = request.swagger.params.body.value;
@@ -48,6 +49,20 @@ export const updateStoreData = async(request,response,next) => {
 
     } catch(err){
         console.error('error in update store data ->' ,err);
+        next(err);
+    }
+}
+
+export const getStoreDetailsById = async(request,response,next) => {
+    try{
+        const storeId :Types.ObjectId = request.swagger.params.id.value;
+        let storeDetailsById = await storesService.getStoreById(storeId);
+        //userDetailsById = JSON.parse(JSON.stringify(userDetailsById));
+        //delete userDetailsById.password;
+        return response.status(200).send({success:true, data :storeDetailsById})
+
+    } catch(err){
+        console.error('error in get store details by id')
         next(err);
     }
 }
