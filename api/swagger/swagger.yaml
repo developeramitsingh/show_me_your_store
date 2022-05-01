@@ -140,6 +140,59 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/Error"
+  /userRegister:
+    x-swagger-router-controller: loginManagement.controller
+    post:
+      description: user register
+      # used as the method name of the controller
+      operationId: userRegistration
+      parameters:
+        - in: body
+          name: body
+          description: user register details.
+          required: true
+          schema:
+            type: object
+            required:
+              - roleId
+              - roleKey
+              - stores
+              - userName
+              - email
+              - mobile
+              - password
+            properties:
+              roleId:
+                type: string
+              roleKey:
+                type: string
+              stores:
+                type: string
+              userName:
+                type: string
+              email:
+                type: string
+                minLength: 1
+                pattern: ^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$
+              mobile:
+                type: string
+                maxLength: 256
+                minLength: 4
+              password:
+                type: string
+                maxLength: 256
+                minLength: 4
+      responses:
+        "201":
+          description: Success user registration
+          schema:
+            # a pointer to a definition
+            type: object
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"          
 
                   
   /swagger:

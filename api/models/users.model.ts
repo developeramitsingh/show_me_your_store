@@ -23,11 +23,13 @@ const usersSchema = new Schema <IUsers> ({
     },
     email: {
         type: String,
+        unique: true,
         description: "email of user",
         index: 0,
     },
     mobile: {
         type: String,
+        unique: true,
         description: "mobile of user",
     },
     password: {
@@ -41,6 +43,7 @@ const usersSchema = new Schema <IUsers> ({
     },
     failedAttempts: {
         type: Number,
+        default:0,
         description: "login failed attempts of user",
     },
     profileImg: {

@@ -4,6 +4,8 @@ import {Types} from "mongoose";
 import bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import config from'../../config';
+import { logInConsole } from "../utils/utils";
+import Constant from "../constant/constant";
 
 export const userLogin = async(request,response,next) => {
     try{
@@ -47,6 +49,43 @@ export const userLogin = async(request,response,next) => {
 
     } catch(err){
         console.error('error in get all active users data ->' ,err);
+        next(err);
+    }
+}
+
+export const userRegistration = async(request,response,next) => {
+    try{
+        let requestBodyData =  request.swagger.params.body.value;
+        logInConsole(requestBodyData);
+       /* const roleId = requestBodyData.roleId;
+        const roleKey = requestBodyData.roleKey;
+        const stores = requestBodyData.stores;
+        const userName = requestBodyData.userName;
+        const email = requestBodyData.email;
+        const mobile = requestBodyData.mobile;
+        const password = requestBodyData.password;*/
+        const stores = requestBodyData.stores;
+        const roleKey = requestBodyData.roleKey;
+        let data = {
+            ...requestBodyData,
+        }
+        if(roleKey===Constant.ROLES.CA){
+          data.stores = stores.split(',');
+        } else {
+            data.stores = null;
+        }
+
+        let newUser = await usersService.createUser(data);
+        logInConsole(newUser);
+        
+        newUser = JSON.parse(JSON.stringify(newUser));
+        delete newUser.password;
+
+        return response.status(200).send({ success: true, data: newUser });
+
+
+    } catch(err){
+        console.error('error in user rejistration ->' ,err);
         next(err);
     }
 } 

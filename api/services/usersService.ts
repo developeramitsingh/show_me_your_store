@@ -18,8 +18,8 @@ class UsersService {
         if (data.password) {
             data.password = bcrypt.hashSync(data.password, 10);
         }
-        const newStore = new Users(data);
-        return newStore.save();
+        const newUsers = new Users(data);
+        return newUsers.save();
     };
 
     public async getUserById(id: Types.ObjectId, attrib?: string | string[]): Promise<IUsers | any>{
