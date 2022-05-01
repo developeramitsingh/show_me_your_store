@@ -9,6 +9,7 @@ export interface IStores {
     storeState: string;
     storeCity: string;
     isActive: boolean;
+    storeImg: string;
     longitude: Types.Decimal128;
     latitude: Types.Decimal128;
     createdAt: Date;
@@ -53,6 +54,10 @@ const storesSchema = new Schema <IStores> ({
         type: String,
         description: "city in which store is",
         index: 0,
+    },
+    storeImg: {
+        type: String,
+        description: "store actual image",
     },
     isActive: {
         type: Boolean,
