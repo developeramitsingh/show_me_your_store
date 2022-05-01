@@ -6,10 +6,6 @@ export const getAllUserData = async(request, response, next) => {
 
         let allUserData = await usersService.getAllUserByQuery({isActive:1});
         allUserData = JSON.parse(JSON.stringify(allUserData));
-        
-        for (const user of allUserData) {
-            delete user.password;
-        }
 
         return response.status(200).send({success:true, data: allUserData});
     } catch(err){

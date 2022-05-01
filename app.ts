@@ -10,6 +10,7 @@ import { initConfig } from './config';
 import { connect } from 'mongoose';
 import * as dotenv from 'dotenv';
 import {checkRoleAndUserExistOrNot} from './api/onBoard/onBoard';
+import { logInConsole } from './api/utils/utils';
 export default class App {
   private app: express.Application;
   private config: any;
@@ -55,6 +56,29 @@ export default class App {
         },
       })
     );
+
+    this.app.use((request: any, response: any, next: any)=> {
+      const send = response.send;
+
+      response.send = function(body: any) {
+        body = JSON.parse(JSON.stringify(body));
+
+        response.send = send;
+        if (body && Array.isArray(body.data)) {
+          const data = body.data;
+          for (const obj of data) {
+            obj.password = undefined;
+          }
+          body.data = data;
+        } else if (body && body.data) {
+          body.data.password = undefined;
+         
+        }
+        send.call(this, body);
+      }
+
+      next();
+    });
 
     //register swaggger
     await new Promise<void>((resolve, reject) => {
