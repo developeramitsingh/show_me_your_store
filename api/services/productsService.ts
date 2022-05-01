@@ -59,5 +59,5 @@ class ProductsService {
     };
 }
 
-const userService = ProductsService.getInstance();
-export default userService;
+const productService = ProductsService.getInstance();
+export default productService;
