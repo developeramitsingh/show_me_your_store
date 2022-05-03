@@ -5,14 +5,15 @@ export interface IProducts {
     productName: string;
     productCompany: string;
     productDesc: string;
-    isAvailable: boolean;
+    isAvailable?: boolean;
     productCategory: string;
     warranty: string;
     price: string;
-    productImg: string;
+    productImg?: string;
     qtyType: string;
     quantity: string;
-    searchTags: any;
+    searchTags?: any;
+    size: string;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -69,6 +70,10 @@ const productsSchema = new Schema <IProducts> ({
     searchTags: {
         type: Array,
         description: "product matched keywords for search",
+    },
+    size: {
+        type: String,
+        description: "size of product",
     },
     createdAt: {
         type: Date, 

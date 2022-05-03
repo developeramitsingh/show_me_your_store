@@ -18,7 +18,7 @@ class RolesService {
         return newRole.save();
     };
 
-    public async getRoleById(id: Types.ObjectId, attrib: string | string[]): Promise<IRoles | any>{
+    public async getRoleById(id: Types.ObjectId, attrib?: string | string[]): Promise<IRoles | any>{
         try {
             return await Roles.findOne({ _id: id}, attrib);
         } catch (err) {
@@ -34,7 +34,7 @@ class RolesService {
         }
     }
 
-    public async getAllRoleByQuery(query: any, attrib?: string | string[]): Promise<IRoles[] | any>{
+    public async getAllRoleByQuery(query: any, attrib?: string | string[]): Promise <IRoles[] | any> {
         try {
             return await Roles.find(query, attrib).exec();
         } catch (err) {

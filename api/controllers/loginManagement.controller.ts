@@ -1,11 +1,12 @@
 import { IUsers} from "../models/users.model";
-import { usersService } from "../services";
+import { rolesService, usersService } from "../services";
 import {Types} from "mongoose";
 import bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import config from'../../config';
 import { logInConsole } from "../utils/utils";
 import Constant from "../constant/constant";
+import { IRoles } from "../models/roles.model";
 
 export const userLogin = async(request,response,next) => {
     try{
@@ -53,23 +54,36 @@ export const userLogin = async(request,response,next) => {
     }
 }
 
-export const userRegistration = async(request,response,next) => {
+export const userRegistration = async(request, response,next) => {
     try{
         let requestBodyData =  request.swagger.params.body.value;
         logInConsole(requestBodyData);
-       /* const roleId = requestBodyData.roleId;
+       /* 
         const roleKey = requestBodyData.roleKey;
         const stores = requestBodyData.stores;
         const userName = requestBodyData.userName;
         const email = requestBodyData.email;
         const mobile = requestBodyData.mobile;
         const password = requestBodyData.password;*/
-        const stores = requestBodyData.stores;
-        const roleKey = requestBodyData.roleKey;
+        const stores: string = requestBodyData.stores;//comma seprated
+        const roleKey: string = requestBodyData.roleKey;
+        const roleId: Types.ObjectId = requestBodyData.roleId;
+        
+        const isRoleFound: IRoles = await rolesService.getRoleById(roleId, ['id']);
+
+        if (!isRoleFound) {
+            throw new Error('Role id is not valid');
+        }
+
         let data = {
             ...requestBodyData,
         }
-        if(roleKey===Constant.ROLES.CA){
+
+        if (roleKey === Constant.ROLES.CA) {
+          if (!stores) {
+              throw new Error('Store id is required');
+          }
+
           data.stores = stores.split(',');
         } else {
             data.stores = null;
@@ -85,7 +99,7 @@ export const userRegistration = async(request,response,next) => {
 
 
     } catch(err){
-        console.error('error in user rejistration ->' ,err);
+        console.error('error in user registration ->' ,err);
         next(err);
     }
 } 

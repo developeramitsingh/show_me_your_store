@@ -2,8 +2,7 @@ import { usersService } from "../services";
 import { logInConsole } from "../utils/utils";
 
 export const getAllUserData = async(request, response, next) => {
-    try{
-
+    try {
         let allUserData = await usersService.getAllUserByQuery({isActive:1});
         allUserData = JSON.parse(JSON.stringify(allUserData));
 
@@ -24,7 +23,7 @@ export const updateUserData = async(request,response,next) => {
             delete data.roleId;
             delete data.roleKey;
             delete data.password;
-            const updateUserData = await usersService.updateUserByQuery(data,{_id:data.id});
+            const updateUserData = await usersService.updateUserByQuery(data, {_id:data.id});
             return response.status(200).send({success:true, data :updateUserData})
     } catch(err) {
       console.error('error in update user details')
@@ -33,7 +32,7 @@ export const updateUserData = async(request,response,next) => {
 }
 
 export const getUserDetailsById = async(request,response,next) => {
-    try{
+    try {
         const userId :string = request.swagger.params.id.value;
         let userDetailsById = await usersService.getUserByQuery({_id:userId});
         userDetailsById = JSON.parse(JSON.stringify(userDetailsById));

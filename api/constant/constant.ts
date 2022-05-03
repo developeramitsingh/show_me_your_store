@@ -4,4 +4,9 @@ export default class Constant {
         CA: 'CA',
         UA: 'UA',
     }
+
+    static readonly PAGINATION = {
+        PAGE: 1,
+        SIZE: 15,
+      };
 }

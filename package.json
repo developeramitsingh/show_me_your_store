@@ -18,6 +18,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
+    "express-fileupload": "^1.3.1",
     "express-jwt": "^6.1.0",
     "helmet": "^5.0.2",
     "js-yaml": "^4.1.0",
@@ -48,8 +49,8 @@
     "build": "tsc",
     "lint": "eslint api/**/*.ts",
     "lintfix": "eslint api/**/*.ts fix",
-    "prebuild": "rmdir /s /q \"build\"",
-    "postbuild": "Xcopy /E /I \"api/swagger\" \"build/api/swagger\" && Xcopy /E /I \"config\" \"build/config\"",
-    "dev": "npm run build && swagger-cli validate \"./build/api/swagger/swagger.yaml\" && tsc-watch --project . --onSuccess \"node ./build\""
+    "prebuild": "rm -rf ./build",
+    "postbuild": "cp -r api/swagger build/api && cp -r config build",
+    "dev": "swagger-cli validate api/swagger/swagger.yaml && npm run build && NODE_ENV=development tsc-watch --project . --onSuccess \"node ./build\""
   }
 }

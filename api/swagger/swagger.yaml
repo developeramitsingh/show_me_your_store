@@ -27,7 +27,129 @@ securityDefinitions:
     name: Authorization
     type: apiKey
     in: header
+  allowSAAndUA:
+    name: Authorization
+    type: apiKey
+    in: header
+  allowAllRoles:
+    name: Authorization
+    type: apiKey
+    in: header
+  allowOnlySAAndCA:
+    name: Authorization
+    type: apiKey
+    in: header
 paths:
+  /products:
+    x-swagger-router-controller: products.controller
+    post:
+      description: create a new product
+      # used as the method name of the controller
+      operationId: createProduct
+      security:
+        - allowOnlySAAndCA: []
+      parameters:
+        - in: body
+          name: body
+          description: new store details.
+          required: true
+          schema:
+            $ref: "#/definitions/ProductPostRequest"
+      responses:
+        "201":
+          description: Success creation of new product
+          schema:
+            # a pointer to a definition
+            type: object
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
+    get:
+      description: get products list based on queries
+      # used as the method name of the controller
+      operationId: getProducts
+      security:
+        - allowAllRoles: []
+      responses:
+        "200":
+          description: Success get all products
+          schema:
+            # a pointer to a definition
+            type: object
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
+    put:
+      description: update a product
+      # used as the method name of the controller
+      operationId: updateProduct
+      security:
+        - allowOnlySAAndCA: []
+      parameters:
+        - in: body
+          name: body
+          description: new store details.
+          required: true
+          schema:
+            $ref: "#/definitions/ProductPutRequest"
+      responses:
+        "201":
+          description: Success creation of new product
+          schema:
+            # a pointer to a definition
+            type: object
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
+  /products/{id}:
+    x-swagger-router-controller: products.controller
+    get:
+      description: get by product id for single product
+      # used as the method name of the controller
+      operationId: getProductById
+      parameters:
+        - name: id
+          in: path
+          description: id of the product
+          required: true
+          type: string
+      security:
+        - allowOnlySAAndCA: []
+      responses:
+        "200":
+          description: Success get a product details
+          schema:
+            # a pointer to a definition
+            type: object
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
+  /roles:
+    x-swagger-router-controller: roles.controller
+    get:
+      description: get all roles list
+      operationId: getAllRoles
+      security:
+        - allowAllRoles: []
+      responses:
+          "200":
+            description: Success get all roles list
+            schema:
+              # a pointer to a definition
+              type: object
+          # responses may fall through to errors
+          default:
+            description: Error
+            schema:
+              $ref: "#/definitions/Error"
   /store:
     # binds a127 app logic to a route
     x-swagger-router-controller: stores.controller
@@ -35,13 +157,15 @@ paths:
       description: create a new store
       # used as the method name of the controller
       operationId: createStore
+      security:
+        - allowOnlySA: []
       parameters:
         - in: body
           name: body
           description: new store details.
           required: true
           schema:
-            $ref: "#/definitions/StoreRequest"
+            $ref: "#/definitions/StorePostRequest"
       responses:
         "201":
           description: Success creation
@@ -54,11 +178,13 @@ paths:
           schema:
             $ref: "#/definitions/Error"
     get:
-      description: get all store data
+      description: get all stores list
       operationId: getAllStoreData
+      security:
+       - allowSAAndUA: []
       responses:
-        "201":
-          description: Success get all store data
+        "200":
+          description: Success get all stores list
           schema:
             # a pointer to a definition
             type: object
@@ -70,6 +196,8 @@ paths:
     put: 
       description: update store data 
       operationId: updateStoreData
+      security:
+        - allowOnlySAAndCA: []
       parameters:
         - in: body
           name: body
@@ -93,6 +221,8 @@ paths:
     get:
       description: get store details by id
       operationId: getStoreDetailsById
+      security:
+        - allowAllRoles: []
       parameters:
         - name: id
           in: path
@@ -100,8 +230,8 @@ paths:
           required: true
           type: string
       responses:
-        "201":
-          description: Success user details by id
+        "200":
+          description: Success store details by id
           schema:
             # a pointer to a definition
             type: object
@@ -115,8 +245,10 @@ paths:
     get:
       description: get all active user data
       operationId: getAllUserData
+      security:
+        - allowOnlySAAndCA: []
       responses:
-        "201":
+        "200":
           description: Success get all active user data
           schema:
             # a pointer to a definition
@@ -130,6 +262,8 @@ paths:
       description: user update
         # used as the method name of the controller
       operationId: updateUserData
+      security:
+        - allowAllRoles: []
       parameters:
         - in: body
           name: body
@@ -146,6 +280,7 @@ paths:
                 type: string
               roleKey:
                 type: string
+                enum: ['SA', 'CA', 'UA']
               stores:
                 type: string
               userName:
@@ -178,6 +313,8 @@ paths:
     get:
       description: get user details by id
       operationId: getUserDetailsById
+      security:
+        - allowAllRoles: []
       parameters:
         - name: id
           in: path
@@ -185,7 +322,7 @@ paths:
           required: true
           type: string
       responses:
-        "201":
+        "200":
           description: Success user details by id
           schema:
             # a pointer to a definition
@@ -257,6 +394,7 @@ paths:
                 type: string
               roleKey:
                 type: string
+                enum: ['SA', 'CA', 'UA']
               stores:
                 type: string
               userName:
@@ -289,27 +427,12 @@ paths:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
-  StoreRequest:
+  StorePostRequest:
     required:
       - storeName
     properties:
-      storeName:
-        type: string
-  Error:
-    required:
-      - message
-    properties:
-      message:
-        type: string
-
-  StorePutRequest: 
-    required:
-      - id
-    properties:
       storeName: 
         type: string
-      id :
-        type : string  
       storeType: 
         type: string
       storeCategory: 
@@ -331,4 +454,104 @@ definitions:
       createdAt:
         type : string
       updatedAt : 
-        type : string           
+        type : string
+  StorePutRequest: 
+    required:
+      - id
+    properties:
+      storeName: 
+        type: string
+      id:
+        type: string  
+      storeType: 
+        type: string
+      storeCategory: 
+        type: string
+      storeAddress: 
+        type: string
+      storePincode: 
+        type: number
+      storeState: 
+        type: string
+      storeCity: 
+        type: string
+      isActive: 
+        type: boolean
+      longitude: 
+        type: number
+      latitude: 
+        type: number
+      createdAt:
+        type: string
+      updatedAt: 
+        type: string
+  Error:
+    required:
+      - message
+    properties:
+      message:
+        type: string   
+  ProductPostRequest:
+    required:
+      - productName
+      - storeId
+    properties:
+      productName:
+        type: string
+        minLength: 1
+      storeId:
+        type: string
+        minLength: 1
+      productCompany:
+        type: string
+      productDesc:
+        type: string
+      isAvailable:
+        type: boolean
+      productCategory:
+        type: string
+      warranty:
+        type: string
+      price:
+        type: string
+      qtyType:
+        type: string
+      quantity:
+        type: string
+      searchTags:
+        type: string
+      size:
+        type: string
+  ProductPutRequest:
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        minLength: 1
+      productName:
+        type: string
+        minLength: 1
+      storeId:
+        type: string
+        minLength: 1
+      productCompany:
+        type: string
+      productDesc:
+        type: string
+      isAvailable:
+        type: boolean
+      productCategory:
+        type: string
+      warranty:
+        type: string
+      price:
+        type: string
+      qtyType:
+        type: string
+      quantity:
+        type: string
+      searchTags:
+        type: string
+      size:
+        type: string
