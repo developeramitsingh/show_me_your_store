@@ -8,5 +8,7 @@ export default class Constant {
     static readonly PAGINATION = {
         PAGE: 1,
         SIZE: 15,
-      };
+    };
+
+    static readonly MAX_LIMIT = 10;
 }

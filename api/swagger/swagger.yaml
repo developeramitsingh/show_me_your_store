@@ -132,6 +132,30 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/Error"
+  /products/search/query:
+    x-swagger-router-controller: products.controller
+    get:
+      operationId: searchProducts
+      description: to search products
+      parameters:
+        - name: storeId
+          in: query
+          required: true
+          type: string
+        - name: searchString
+          in: query
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success get searched products
+          schema:
+            type: object
+        default:
+          description: Error
+          schema:
+              $ref: "#/definitions/Error"
+
   /roles:
     x-swagger-router-controller: roles.controller
     get:
@@ -139,6 +163,29 @@ paths:
       operationId: getAllRoles
       security:
         - allowAllRoles: []
+      responses:
+          "200":
+            description: Success get all roles list
+            schema:
+              # a pointer to a definition
+              type: object
+          # responses may fall through to errors
+          default:
+            description: Error
+            schema:
+              $ref: "#/definitions/Error"
+    post:
+      description: create a new role
+      operationId: createRole
+      security:
+        - allowOnlySA: []
+      parameters:
+        - in: body
+          name: body
+          required: true
+          description: new role details
+          schema:
+            $ref: "#/definitions/RolePostRequest"
       responses:
           "200":
             description: Success get all roles list
@@ -519,7 +566,9 @@ definitions:
       quantity:
         type: string
       searchTags:
-        type: string
+        type: array
+        items:
+          type: string
       size:
         type: string
   ProductPutRequest:
@@ -552,6 +601,22 @@ definitions:
       quantity:
         type: string
       searchTags:
-        type: string
+        type: array
+        items:
+          type: string
       size:
         type: string
+  RolePostRequest:
+    required:
+      - roleKey
+      - roleDesc
+      - roleName
+    properties:
+      roleKey:
+        type: string
+        enum: ["SA", "CA", "UA"]
+      roleDesc:
+        type: string
+      roleName:
+        type: string
+

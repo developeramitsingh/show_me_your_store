@@ -18,8 +18,7 @@ const rolesSchema = new Schema <IRoles> ({
     roleKey: {
         type: String,
         description: "key of role",
-        index: 0,
-        
+        unique: true,
     },
     roleDesc: {
         type: String,

@@ -7,6 +7,7 @@ import { getOffset } from '../utils/utils';
 
 export const createProduct = async (request: any, response: any, next: any) => {
     try {
+        console.info(`calling createProduct...`);
         const requestBody: any = request.swagger.params.body?.value;
         const file: any = request.files;
 
@@ -28,13 +29,13 @@ export const createProduct = async (request: any, response: any, next: any) => {
             productImg: productImgPath ? productImgPath : null,
             qtyType: requestBody.qtyType,
             quantity: requestBody.quantity,
-            searchTags: requestBody.searchTags ? requestBody.searchTags.split(',') : [],
+            searchTags: requestBody.searchTags ? [requestBody.productName, `${requestBody.productName} ${requestBody.quantity || ''}` , requestBody.productCompany, ...(requestBody.productCategory ? [requestBody.productCategory] : []), ...requestBody.searchTags] : [requestBody.productName],
             size: requestBody.size,
         };
 
         const createdProduct = await productService.createProduct(data);
 
-        return response.status(200).send({ success: true, data: createProduct });
+        return response.status(200).send({ success: true, data: createdProduct });
     } catch (err) {
         console.error(err);
         next(err);
@@ -43,6 +44,7 @@ export const createProduct = async (request: any, response: any, next: any) => {
 
 export const getProducts = async (request: any, response: any, next: any) => {
     try {
+        console.info(`calling getProducts...`);
         const roleKey: string = request.user.roleId.roleKey;
         const isActive: boolean = request.swagger.params.isActive?.value;
         const storeId: string = request.swagger.params.storeId?.value;
@@ -78,6 +80,7 @@ export const getProducts = async (request: any, response: any, next: any) => {
 
 export const getProductById = async (request: any, response: any, next: any) => {
  try {
+    console.info(`calling getProductById...`);
     const id: Types.ObjectId = request.swaggar.params.id?.value;
 
     const productData: IProducts = await productService.getProductById(id);
@@ -91,6 +94,7 @@ export const getProductById = async (request: any, response: any, next: any) => 
 
 export const updateProduct = async (request: any, response: any, next: any) => {
     try {
+        console.info(`calling updateProduct...`);
         const requestBody: any = request.swagger.params.body?.value;
 
         let productImgPath: any;
@@ -160,4 +164,25 @@ const uploadProductImage = async (request: any): Promise<string> => {
     fs.writeFileSync(`${folderPath}/${newImgName}`, imgData);
 
     return `${productImgPath}${newImgName}`;
+}
+
+export const searchProducts = async (request: any, response: any, next: any) => {
+    try {
+        console.info(`calling searchProducts...`);
+        const storeId: string = request.swagger.params.storeId.value;
+        const searchString: string = request.swagger.params.searchString.value;
+
+        console.info({ storeId });
+        console.info({ searchString });
+        const regx = new RegExp(`${searchString}`, 'i');
+        console.info(regx);
+        const searchedProducts: IProducts[] = await productService.searchProducts({
+            storeId,
+            $text: { $search: regx }
+        });
+
+        return response.status(200).send({ success: true, data: searchedProducts });
+    } catch(err) {
+        next(err);
+    }
 }

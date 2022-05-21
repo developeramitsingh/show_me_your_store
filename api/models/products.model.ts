@@ -22,13 +22,12 @@ const productsSchema = new Schema <IProducts> ({
     storeId: {
         type: Schema.Types.ObjectId,
         description: "store id",
-        index: 0,
+        index: true,
         ref: 'Stores',
     },
     productName: {
         type: String,
         description: "product name",
-        index: 0,
     },
     productCompany: {
         type: String,
@@ -80,14 +79,14 @@ const productsSchema = new Schema <IProducts> ({
         default: Date.now,
         required: false,
         description: "",
-        index: 0,
     },
     updatedAt: {
         type: Date, 
         default: Date.now,
         required: false,
-        index: 0,
     }
 });
+
+productsSchema.index({ searchTags: 'text' });
 
 export const Products  = model<IProducts>('Products', productsSchema);

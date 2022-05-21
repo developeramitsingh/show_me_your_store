@@ -1,5 +1,7 @@
 import { IProducts, Products } from "../models/products.model";
 import { Types } from "mongoose";
+import { crossOriginEmbedderPolicy } from "helmet";
+import Constant from "../constant/constant";
 
 class ProductsService {
     private constructor () {}
@@ -79,6 +81,16 @@ class ProductsService {
             console.error(`error in updateProductManyByQuery: ${err}`);
         }
     };
+
+    public async searchProducts(query: any): Promise<any> {
+        try {
+            return await Products.find(query, {
+                score: { $meta: "textScore" }
+            }).sort({ score: { $meta: "textScore" }}).limit(Constant.MAX_LIMIT);
+        } catch (err) {
+            console.error(`error in searchProducts: ${err}`);
+        }
+    }
 }
 
 const productService = ProductsService.getInstance();
