@@ -11,6 +11,7 @@ import { connect } from 'mongoose';
 import * as dotenv from 'dotenv';
 import {checkRoleAndUserExistOrNot} from './api/onBoard/onBoard';
 import { logInConsole } from './api/utils/utils';
+import path from 'path';
 const fileUpload = require('express-fileupload');
 
 export default class App {
@@ -66,7 +67,7 @@ export default class App {
       }
     ))
 
-    this.app.use('/uploads', express.static(__dirname + '/uploads'));
+    this.app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
     //setting up the root folder path;
     global.__basedir = __dirname;

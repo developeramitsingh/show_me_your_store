@@ -71,13 +71,13 @@ paths:
       operationId: createProduct
       security:
         - allowOnlySAAndCA: []
-      parameters:
-        - in: body
-          name: body
-          description: new store details.
-          required: true
-          schema:
-            $ref: "#/definitions/ProductPostRequest"
+      # parameters:
+      #   - in: body
+      #     name: body
+      #     description: new store details.
+      #     required: true
+      #     schema:
+      #       $ref: "#/definitions/ProductPostRequest"
       responses:
         "201":
           description: Success creation of new product
@@ -251,7 +251,11 @@ paths:
       description: get all stores list
       operationId: getAllStoreData
       security:
-       - allowSAAndUA: []
+       - allowAllRoles: []
+      parameters:
+        - name: query
+          in: query
+          type: string
       responses:
         "200":
           description: Success get all stores list

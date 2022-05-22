@@ -24,11 +24,21 @@ export const createStore = async (request, response, next) => {
     }
 }
 
-export const getAllStoreData = async(request,response,next) => {
-    try{
+export const getAllStoreData = async (request, response, next) => {
+    try {
+        console.info(`getAllStoreData called...`);
+        let query: any = request.swagger.params.query.value;
 
-        const getAllStoreData = await storesService.getAllStoreByQuery({isActive:1});
-        return response.status(200).send({success:true, data:getAllStoreData});
+        
+        console.info({query});
+
+        query = JSON.parse(query);
+
+        console.info({query});
+
+        const getAllStoreData = await storesService.getAllStoreByQuery(query);
+
+        return response.status(200).send({ success: true, data: getAllStoreData });
 
     } catch(err){
         console.error('error in get all store data ->' ,err);

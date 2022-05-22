@@ -8,34 +8,42 @@ import { getOffset } from '../utils/utils';
 export const createProduct = async (request: any, response: any, next: any) => {
     try {
         console.info(`calling createProduct...`);
-        const requestBody: any = request.swagger.params.body?.value;
+        const requestBody: any = request.body;
         const file: any = request.files;
+
+        console.info({requestBody});
 
         console.info({ file });
         let productImgPath: any;
         console.info({ files: file });
-        if (file) {
-            productImgPath = await uploadProductImage(request);
+        
+        const storeIds: Types.ObjectId[] = requestBody.storeId ? requestBody.storeId.split(',') : [];
+
+        console.info({storeIds});
+        for (const storeId of storeIds) {
+            if (file) {
+                productImgPath = await uploadProductImage(request, storeId);
+            }
+            const data: IProducts = {
+                storeId,
+                productName: requestBody.productName,
+                productCompany: requestBody.productCompany,
+                productDesc: requestBody.productDesc,
+                productCategory: requestBody.productCategory,
+                warranty: requestBody.warranty,
+                price: requestBody.price,
+                productImg: productImgPath ? productImgPath : null,
+                qtyType: requestBody.qtyType,
+                quantity: requestBody.quantity,
+                searchTags: requestBody.searchTags ? [requestBody.productName, `${requestBody.productName} ${requestBody.quantity || ''}` , requestBody.productCompany, ...(requestBody.productCategory ? [requestBody.productCategory] : []), ...requestBody.searchTags] : [requestBody.productName],
+                size: requestBody.size,
+            };
+    
+            productService.createProduct(data);
         }
+        
 
-        const data: IProducts = {
-            storeId: requestBody.storeId,
-            productName: requestBody.productName,
-            productCompany: requestBody.productCompany,
-            productDesc: requestBody.productDesc,
-            productCategory: requestBody.productCategory,
-            warranty: requestBody.warranty,
-            price: requestBody.price,
-            productImg: productImgPath ? productImgPath : null,
-            qtyType: requestBody.qtyType,
-            quantity: requestBody.quantity,
-            searchTags: requestBody.searchTags ? [requestBody.productName, `${requestBody.productName} ${requestBody.quantity || ''}` , requestBody.productCompany, ...(requestBody.productCategory ? [requestBody.productCategory] : []), ...requestBody.searchTags] : [requestBody.productName],
-            size: requestBody.size,
-        };
-
-        const createdProduct = await productService.createProduct(data);
-
-        return response.status(200).send({ success: true, data: createdProduct });
+        return response.status(200).send({ success: true });
     } catch (err) {
         console.error(err);
         next(err);
@@ -100,7 +108,7 @@ export const updateProduct = async (request: any, response: any, next: any) => {
         let productImgPath: any;
         console.info({ files: request.files });
         if (request.files) {
-            productImgPath = await uploadProductImage(request);
+            productImgPath = await uploadProductImage(request, requestBody.storeId);
         }
 
         const data: IProducts = {
@@ -126,8 +134,8 @@ export const updateProduct = async (request: any, response: any, next: any) => {
     }
 }
 
-const uploadProductImage = async (request: any): Promise<string> => {
-    const requestBody: any = request.swagger.params.body?.value;
+const uploadProductImage = async (request: any, storeId: Types.ObjectId): Promise<string> => {
+    const requestBody: any = request.body;
     const file: any = request.files;
 
     const fullFileName: string[] = file && file.imgFile ? file.imgFile.name.split('.') : [];
@@ -143,9 +151,6 @@ const uploadProductImage = async (request: any): Promise<string> => {
 
     //final new image name 
     const newImgName: string = `${imgName.toLowerCase()}_${new Date().getTime()}.${extn}`;
-
-    const storeId: string = requestBody.storeId //single store id;
-    console.info({newImgName});
 
     //path on which image will be written
     const productImgPath: string = `uploads/products/${storeId}/`;
