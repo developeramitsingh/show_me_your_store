@@ -47,7 +47,7 @@ export const getProducts = async (request: any, response: any, next: any) => {
         console.info(`calling getProducts...`);
         const roleKey: string = request.user.roleId.roleKey;
         const isActive: boolean = request.swagger.params.isActive?.value;
-        const storeId: string = request.swagger.params.storeId?.value;
+        const storeId: string[] = request.user.stores;
 
         const pageNumber =
             request.swagger.params.page?.value || Constant.PAGINATION.PAGE;

@@ -55,7 +55,8 @@ export const userLogin = async(request,response,next) => {
 }
 
 export const userRegistration = async(request, response,next) => {
-    try{
+    try {
+        console.info(`user registration route called`);
         let requestBodyData =  request.swagger.params.body.value;
         logInConsole(requestBodyData);
        /* 
@@ -66,12 +67,11 @@ export const userRegistration = async(request, response,next) => {
         const mobile = requestBodyData.mobile;
         const password = requestBodyData.password;*/
         const stores: string = requestBodyData.stores;//comma seprated
-        const roleKey: string = requestBodyData.roleKey;
         const roleId: Types.ObjectId = requestBodyData.roleId;
         
-        const isRoleFound: IRoles = await rolesService.getRoleById(roleId, ['id']);
+        const roleData: IRoles = await rolesService.getRoleById(roleId, ['id', 'roleKey']);
 
-        if (!isRoleFound) {
+        if (!roleData) {
             throw new Error('Role id is not valid');
         }
 
@@ -79,7 +79,7 @@ export const userRegistration = async(request, response,next) => {
             ...requestBodyData,
         }
 
-        if (roleKey === Constant.ROLES.CA) {
+        if (roleData.roleKey?.toUpperCase() === Constant.ROLES.CA) {
           if (!stores) {
               throw new Error('Store id is required');
           }
@@ -88,6 +88,8 @@ export const userRegistration = async(request, response,next) => {
         } else {
             data.stores = null;
         }
+
+        console.info({data});
 
         let newUser = await usersService.createUser(data);
         logInConsole(newUser);

@@ -40,6 +40,29 @@ securityDefinitions:
     type: apiKey
     in: header
 paths:
+  /checkRouteAccess:
+    x-swagger-router-controller: permission.controller
+    get:
+      description: check route access.
+      operationId: checkRouteAccess
+      x-authz-admin-scope: []
+      security:
+        - allowAllRoles: []
+      parameters:
+        - name: path
+          in: query
+          description: route need to access.
+          required: true
+          type: string
+      responses:
+        201:
+          description: Returns boolean status.
+          schema:
+            type: object
+        400:
+          description: Bad Json Formatting
+          schema:
+            $ref: "#/definitions/Error"
   /products:
     x-swagger-router-controller: products.controller
     post:
@@ -325,9 +348,6 @@ paths:
                 type: string
               roleId:
                 type: string
-              roleKey:
-                type: string
-                enum: ['SA', 'CA', 'UA']
               stores:
                 type: string
               userName:
@@ -430,7 +450,6 @@ paths:
             type: object
             required:
               - roleId
-              - roleKey
               - stores
               - userName
               - email
@@ -439,9 +458,6 @@ paths:
             properties:
               roleId:
                 type: string
-              roleKey:
-                type: string
-                enum: ['SA', 'CA', 'UA']
               stores:
                 type: string
               userName:
