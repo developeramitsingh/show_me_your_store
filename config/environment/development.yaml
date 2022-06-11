@@ -1,3 +1,5 @@
 jwt:
   jwtSecret: 'df31ddfhdqqfhdh262ndh1jsdjh4'
   jwtSessionTimeout: '3h'
+imageKit:
+  url: "https://ik.imagekit.io/nwxotnqhh"

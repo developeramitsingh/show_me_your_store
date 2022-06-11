@@ -4,10 +4,13 @@ import * as _ from 'lodash';
 import * as path from 'path';
 
 
-const config: any = {
+const config: IConfig = {
   jwt: {
     jwtSecret: '',
     jwtSessionTimeout: '',
+  },
+  imageKit: {
+    url: '',
   },
   algorithms: {
     RSA: ['RS256'],

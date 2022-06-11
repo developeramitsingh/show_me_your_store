@@ -4,6 +4,17 @@ import Constant from '../constant/constant';
 import { IProducts } from "../models/products.model";
 import productService from "../services/productsService";
 import { getOffset } from '../utils/utils';
+import config from '../../config';
+import ImageKitHelper from '../helpers/imageKitHelper';
+const ImageKit = require("imagekit");
+
+const CONFIG_OPTIONS = {
+    publicKey: process.env.publicKeyImageKit,
+    privateKey: process.env.privateKeyImageKit,
+    urlEndpoint: config.imageKit.url,
+};
+
+const imageKit = new ImageKit(CONFIG_OPTIONS);
 
 export const createProduct = async (request: any, response: any, next: any) => {
     try {
@@ -24,6 +35,7 @@ export const createProduct = async (request: any, response: any, next: any) => {
             if (file) {
                 productImgPath = await uploadProductImage(request, storeId);
             }
+            console.info('final', {productImgPath});
             const data: IProducts = {
                 storeId,
                 productName: requestBody.productName,
@@ -142,33 +154,25 @@ const uploadProductImage = async (request: any, storeId: Types.ObjectId): Promis
     console.info({fullFileName});
     const imgName: string = fullFileName[0] || '';
     console.info({imgName});
-    const extn: string = fullFileName[1] || '';
+    const extn: string = fullFileName[fullFileName?.length - 1] || '';
     console.info({extn});
 
     //reading image file from temp folder
-    const imgData = fs.readFileSync(String(file.imgFile.tempFilePath));
-    console.info({imgData});
+    const imgDataStream = fs.createReadStream(String(file.imgFile.tempFilePath));
 
     //final new image name 
     const newImgName: string = `${imgName.toLowerCase()}_${new Date().getTime()}.${extn}`;
 
     //path on which image will be written
-    const productImgPath: string = `uploads/products/${storeId}/`;
+    const productImgPath: string = `uploads/products/${storeId}`;
 
-    console.info({productImgPath});
-
-    const folderPath: string = `${global.__basedir}/${productImgPath}`;
-
-    try {
-        fs.mkdirSync(folderPath, { recursive: true } );
-    } catch (e) {
-        console.log('Cannot create folder ', e);
-    }
+    const response = await ImageKitHelper.uploadImage({ 
+        imageKitInstance: imageKit, file: imgDataStream, fileName: newImgName, folder: productImgPath 
+    });
     
-    //writing to the uploads folder
-    fs.writeFileSync(`${folderPath}/${newImgName}`, imgData);
+    console.info(response);
 
-    return `${productImgPath}${newImgName}`;
+    return `${config.imageKit.url}/${productImgPath}/${newImgName}`;
 }
 
 export const searchProducts = async (request: any, response: any, next: any) => {
@@ -186,7 +190,7 @@ export const searchProducts = async (request: any, response: any, next: any) => 
             $text: { $search: regx }
         });
 
-        return response.status(200).send({ success: true, data: searchedProducts });
+        return response.headers().status(200).send({ success: true, data: searchedProducts });
     } catch(err) {
         next(err);
     }

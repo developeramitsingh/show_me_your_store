@@ -44,7 +44,7 @@ export default class App {
     this.app.use(
       cors({
         credentials: true,
-        origin: true,
+        origin: 'http://localhost:3000'
       })
     );
 
@@ -92,6 +92,14 @@ export default class App {
         send.call(this, body);
       }
 
+      next();
+    });
+
+    this.app.use(function(req, res, next) {
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Credentials', 'true');  
+      res.header('Access-Control-Allow-Headers', 'Access-Control-Allow-Methods');
+      res.header('Origin, X-Requested-With, Content-Type, Accept');
       next();
     });
 
