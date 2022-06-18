@@ -207,7 +207,7 @@ export const searchProducts = async (request: any, response: any, next: any) => 
             $text: { $search: regx }
         });
 
-        return response.headers().status(200).send({ success: true, data: searchedProducts });
+        return response.status(200).send({ success: true, data: searchedProducts });
     } catch(err) {
         next(err);
     }
