@@ -117,13 +117,13 @@ paths:
       operationId: updateProduct
       security:
         - allowOnlySAAndCA: []
-      parameters:
-        - in: body
-          name: body
-          description: new store details.
-          required: true
-          schema:
-            $ref: "#/definitions/ProductPutRequest"
+      # parameters:
+      #   - in: body
+      #     name: body
+      #     description: new store details.
+      #     required: true
+      #     schema:
+      #       $ref: "#/definitions/ProductPutRequest"
       responses:
         "201":
           description: Success creation of new product

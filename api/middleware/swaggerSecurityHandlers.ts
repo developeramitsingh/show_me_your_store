@@ -18,7 +18,6 @@ const decodeJWT = async (request: any, response: any) => {
 	console.log('Decode and verify JWT token');
 	try {
 		const cookieName: string = 'token';
-		console.info({coo: request.cookies[cookieName]});
 		const token = request.cookies[cookieName] 
 			? request.cookies[cookieName]
 			: request.headers.authorization &&
@@ -30,7 +29,7 @@ const decodeJWT = async (request: any, response: any) => {
 
 		request.user = await jwt.verify(token, secret);
 
-		logInConsole(request.user);
+		//logInConsole(request.user);
 		return request.user;
 	} catch (err) {
 		console.error(`error in decodeJWT: ${err}`);

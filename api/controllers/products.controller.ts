@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import Constant from '../constant/constant';
 import { IProducts } from "../models/products.model";
 import productService from "../services/productsService";
-import { getOffset } from '../utils/utils';
+import { getOffset, logInConsole } from '../utils/utils';
 import config from '../../config';
 import ImageKitHelper from '../helpers/imageKitHelper';
 const ImageKit = require("imagekit");
@@ -116,15 +116,16 @@ export const getProductById = async (request: any, response: any, next: any) => 
 export const updateProduct = async (request: any, response: any, next: any) => {
     try {
         console.info(`calling updateProduct...`);
-        const requestBody: any = request.swagger.params.body?.value;
+        const requestBody: any = request.body;
 
-        console.info({requestBody})
+        logInConsole(requestBody)
         console.info({ files: request.files });
         let finalImageUrl: string = '';
         let finalImageThumbUrl: string = '';
 
         if (request.files) {
             const imagePaths: IUploadImage = await uploadImage(request, `uploads/products/${requestBody.storeId}`);
+            console.info({imagePaths});
             finalImageUrl = imagePaths.finalImageUrl;
             finalImageThumbUrl = imagePaths.finalImageThumbUrl;
         }
@@ -144,7 +145,10 @@ export const updateProduct = async (request: any, response: any, next: any) => {
             ...(requestBody.searchTags ? { searchTags: requestBody.searchTags.split(',') }: {} ),
             size: requestBody.size,
         };
-        const updatedProduct = await productService.updateProductByQuery(data, { _id: requestBody.id });
+
+        console.info('data ---> final', {data});
+        console.info('requestBody.id ---> requestBody.id', {data: requestBody._id});
+        const updatedProduct = await productService.updateProductByQuery(data, { _id: requestBody._id });
 
         return response.status(200).send({ success: true, data: updatedProduct });
     } catch(err) {
