@@ -9,7 +9,8 @@ export interface IProducts {
     productCategory: string;
     warranty: string;
     price: string;
-    productImg?: string;
+    productImg?: string | null;
+    productImgThumb?: string | null;
     qtyType: string;
     quantity: string;
     searchTags?: any;
@@ -56,7 +57,11 @@ const productsSchema = new Schema <IProducts> ({
     },
     productImg: {
         type: String,
-        description: "image of product",
+        description: "image url of product",
+    },
+    productImgThumb: {
+        type: String,
+        description: "thumbnail url of image of product",
     },
     qtyType: {
         type: String,

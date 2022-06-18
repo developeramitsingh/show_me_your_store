@@ -21,21 +21,21 @@ export const createProduct = async (request: any, response: any, next: any) => {
         console.info(`calling createProduct...`);
         const requestBody: any = request.body;
         const file: any = request.files;
-
-        console.info({requestBody});
-
-        console.info({ file });
-        let productImgPath: any;
-        console.info({ files: file });
         
         const storeIds: Types.ObjectId[] = requestBody.storeId ? requestBody.storeId.split(',') : [];
 
         console.info({storeIds});
         for (const storeId of storeIds) {
+            let finalImageUrl: string = '';
+            let finalImageThumbUrl: string = '';
+
             if (file) {
-                productImgPath = await uploadProductImage(request, storeId);
+                const imagePaths: IUploadImage = await uploadImage(request, `uploads/products/${storeId}`);
+                finalImageUrl = imagePaths.finalImageUrl;
+                finalImageThumbUrl = imagePaths.finalImageThumbUrl;
             }
-            console.info('final', {productImgPath});
+            console.info('final', {finalImageUrl});
+            console.info('finalImageThumbUrl', {finalImageThumbUrl});
             const data: IProducts = {
                 storeId,
                 productName: requestBody.productName,
@@ -44,7 +44,8 @@ export const createProduct = async (request: any, response: any, next: any) => {
                 productCategory: requestBody.productCategory,
                 warranty: requestBody.warranty,
                 price: requestBody.price,
-                productImg: productImgPath ? productImgPath : null,
+                productImg: finalImageUrl || null,
+                productImgThumb: finalImageThumbUrl || null,
                 qtyType: requestBody.qtyType,
                 quantity: requestBody.quantity,
                 searchTags: requestBody.searchTags ? [requestBody.productName, `${requestBody.productName} ${requestBody.quantity || ''}` , requestBody.productCompany, ...(requestBody.productCategory ? [requestBody.productCategory] : []), ...requestBody.searchTags] : [requestBody.productName],
@@ -101,7 +102,7 @@ export const getProducts = async (request: any, response: any, next: any) => {
 export const getProductById = async (request: any, response: any, next: any) => {
  try {
     console.info(`calling getProductById...`);
-    const id: Types.ObjectId = request.swaggar.params.id?.value;
+    const id: Types.ObjectId = request.swagger.params.id?.value;
 
     const productData: IProducts = await productService.getProductById(id);
 
@@ -117,10 +118,15 @@ export const updateProduct = async (request: any, response: any, next: any) => {
         console.info(`calling updateProduct...`);
         const requestBody: any = request.swagger.params.body?.value;
 
-        let productImgPath: any;
+        console.info({requestBody})
         console.info({ files: request.files });
+        let finalImageUrl: string = '';
+        let finalImageThumbUrl: string = '';
+
         if (request.files) {
-            productImgPath = await uploadProductImage(request, requestBody.storeId);
+            const imagePaths: IUploadImage = await uploadImage(request, `uploads/products/${requestBody.storeId}`);
+            finalImageUrl = imagePaths.finalImageUrl;
+            finalImageThumbUrl = imagePaths.finalImageThumbUrl;
         }
 
         const data: IProducts = {
@@ -131,7 +137,8 @@ export const updateProduct = async (request: any, response: any, next: any) => {
             productCategory: requestBody.productCategory,
             warranty: requestBody.warranty,
             price: requestBody.price,
-            ...(productImgPath ? { productImg: productImgPath } : {}),
+            ...(finalImageUrl ? { productImg: finalImageUrl } : {}),
+            ...(finalImageThumbUrl ? { productImgThumb: finalImageThumbUrl } : {}),
             qtyType: requestBody.qtyType,
             quantity: requestBody.quantity,
             ...(requestBody.searchTags ? { searchTags: requestBody.searchTags.split(',') }: {} ),
@@ -146,33 +153,39 @@ export const updateProduct = async (request: any, response: any, next: any) => {
     }
 }
 
-const uploadProductImage = async (request: any, storeId: Types.ObjectId): Promise<string> => {
-    const requestBody: any = request.body;
+const uploadImage = async (request: any, folderToCreate: string): Promise<IUploadImage> => {
     const file: any = request.files;
+    let finalImageUrl: string = '';
+    let finalImageThumbUrl: string = '';
 
-    const fullFileName: string[] = file && file.imgFile ? file.imgFile.name.split('.') : [];
-    console.info({fullFileName});
-    const imgName: string = fullFileName[0] || '';
-    console.info({imgName});
-    const extn: string = fullFileName[fullFileName?.length - 1] || '';
-    console.info({extn});
+    if (file) {
+        const fullFileName: string[] = file && file.imgFile ? file.imgFile.name.split('.') : [];
 
-    //reading image file from temp folder
-    const imgDataStream = fs.createReadStream(String(file.imgFile.tempFilePath));
+        const imgName: string = fullFileName[0] || '';
+        const extn: string = fullFileName[fullFileName?.length - 1] || '';
 
-    //final new image name 
-    const newImgName: string = `${imgName.toLowerCase()}_${new Date().getTime()}.${extn}`;
+        //reading image file from temp folder
+        const imgDataStream = fs.createReadStream(String(file.imgFile.tempFilePath));
 
-    //path on which image will be written
-    const productImgPath: string = `uploads/products/${storeId}`;
+        //final new image name 
+        const newImgName: string = `${imgName.toLowerCase()}_${new Date().getTime()}.${extn}`;
 
-    const response = await ImageKitHelper.uploadImage({ 
-        imageKitInstance: imageKit, file: imgDataStream, fileName: newImgName, folder: productImgPath 
-    });
-    
-    console.info(response);
+        //path on which image will be written
+        //const folderToCreate: string = `uploads/products/${storeId}`;
 
-    return `${config.imageKit.url}/${productImgPath}/${newImgName}`;
+        const response = await ImageKitHelper.uploadImage({ 
+            imageKitInstance: imageKit, file: imgDataStream, fileName: newImgName, folder: folderToCreate 
+        });
+        
+        console.info(response);
+
+        if (response) {
+            finalImageUrl = response.url;
+            finalImageThumbUrl = response.thumbnailUrl;
+        }
+    }
+
+    return { finalImageUrl, finalImageThumbUrl };
 }
 
 export const searchProducts = async (request: any, response: any, next: any) => {
