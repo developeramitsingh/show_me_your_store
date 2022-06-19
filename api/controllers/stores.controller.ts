@@ -1,6 +1,7 @@
 import { storesService } from "../services";
 import { logInConsole } from "../utils/utils";
 import {Types} from "mongoose";
+import { IStores } from "../models/stores.model";
 
 export const createStore = async (request, response, next) => {
     const requestBody: any = request.swagger.params.body.value;
@@ -36,7 +37,7 @@ export const getAllStoreData = async (request, response, next) => {
 
         console.info({query});
 
-        const getAllStoreData = await storesService.getAllStoreByQuery(query);
+        const getAllStoreData: IStores[] | any = await storesService.getAllStoreByQuery(query);
 
         return response.status(200).send({ success: true, data: getAllStoreData });
 

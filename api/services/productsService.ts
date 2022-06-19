@@ -91,6 +91,14 @@ class ProductsService {
             console.error(`error in searchProducts: ${err}`);
         }
     }
+
+    public async getProducts(query: any): Promise<any> {
+        try {
+            return await Products.find(query).limit(Constant.MAX_LIMIT);
+        } catch (err) {
+            console.error(`error in searchProducts: ${err}`);
+        }
+    }
 }
 
 const productService = ProductsService.getInstance();

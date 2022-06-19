@@ -132,6 +132,7 @@ export const updateProduct = async (request: any, response: any, next: any) => {
 
         const data: IProducts = {
             storeId: requestBody.storeId,
+            isAvailable: requestBody.isAvailable,
             productName: requestBody.productName,
             productCompany: requestBody.productCompany,
             productDesc: requestBody.productDesc,
@@ -200,12 +201,21 @@ export const searchProducts = async (request: any, response: any, next: any) => 
 
         console.info({ storeId });
         console.info({ searchString });
-        const regx = new RegExp(`${searchString}`, 'i');
-        console.info(regx);
-        const searchedProducts: IProducts[] = await productService.searchProducts({
-            storeId,
-            $text: { $search: regx }
-        });
+
+        let searchedProducts: IProducts[];
+        if(searchString) {
+            const regx = new RegExp(`${searchString}`, 'i');
+            console.info(regx);
+            searchedProducts = await productService.searchProducts({
+                storeId,
+                $text: { $search: regx }
+            });
+        } else {
+            searchedProducts = await productService.getProducts({
+                storeId,
+            });
+        }
+        
 
         return response.status(200).send({ success: true, data: searchedProducts });
     } catch(err) {
