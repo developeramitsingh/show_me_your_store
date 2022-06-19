@@ -93,6 +93,10 @@ paths:
       description: get products list based on queries
       # used as the method name of the controller
       operationId: getProducts
+      parameters:
+        - name: query
+          in: query
+          type: string
       security:
         - allowAllRoles: []
       produces:

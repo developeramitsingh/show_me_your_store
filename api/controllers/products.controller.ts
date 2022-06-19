@@ -67,26 +67,30 @@ export const getProducts = async (request: any, response: any, next: any) => {
     try {
         console.info(`calling getProducts...`);
         const roleKey: string = request.user.roleId.roleKey;
-        const isActive: boolean = request.swagger.params.isActive?.value;
-        const storeId: string[] = request.user.stores;
+        let query: any = request.swagger.params.query.value;
 
-        const pageNumber =
-            request.swagger.params.page?.value || Constant.PAGINATION.PAGE;
-        const pageSize =
-            request.swagger.params.size?.value || Constant.PAGINATION.SIZE;
-        const sort = request.swagger.params.sort?.value;
+        
+        console.info({query});
+
+        query = JSON.parse(query);
+
+        console.info({query});
+
+        const pageNumber = query.page || Constant.PAGINATION.PAGE;
+        const pageSize = query.size || Constant.PAGINATION.SIZE;
+        const sort = query.sort;
         //const forExport = request.swagger.params.forExport?.value;
 
         const offset = getOffset(pageNumber, pageSize);
 
-        if ([Constant.ROLES.CA, Constant.ROLES.UA].includes(roleKey) && !storeId) {
+        if ([Constant.ROLES.CA, Constant.ROLES.UA].includes(roleKey) && !query?.storeId) {
             throw new Error('store id is required');
         }
 
-        console.info({ roleKey, isActive, storeId, pageNumber, pageSize, sort, offset });
+        console.info({ roleKey, storeId: query.storeId, pageNumber, pageSize, sort, offset });
  
         const allProducts: IGetAllData = await productService.getCountAndProductsByQuery({
-            query: { ...(storeId && { storeId }), ...(isActive && { isActive }) },
+            query,
             limit: pageSize,
             offset,
             sort,
