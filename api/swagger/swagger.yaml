@@ -261,13 +261,13 @@ paths:
       operationId: createStore
       security:
         - allowOnlySA: []
-      parameters:
-        - in: body
-          name: body
-          description: new store details.
-          required: true
-          schema:
-            $ref: "#/definitions/StorePostRequest"
+      # parameters:
+      #   - in: body
+      #     name: body
+      #     description: new store details.
+      #     required: true
+      #     schema:
+      #       $ref: "#/definitions/StorePostRequest"
       responses:
         "201":
           description: Success creation

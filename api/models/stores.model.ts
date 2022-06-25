@@ -1,19 +1,21 @@
 import { Schema, model, Types } from 'mongoose';
 export interface IStores {
-    _id: Types.ObjectId;
-    storeName: string;
-    storeType: string;
-    storeCategory: string;
-    storeAddress: string;
-    storePincode: number;
-    storeState: string;
-    storeCity: string;
-    isActive: boolean;
-    storeImg: string;
-    longitude: Types.Decimal128;
-    latitude: Types.Decimal128;
-    createdAt: Date;
-    updatedAt: Date;
+    _id?: Types.ObjectId;
+    storeName?: string;
+    storeType?: string;
+    storeCategory?: string;
+    storeAddress?: string;
+    storePincode?: number;
+    storeState?: string;
+    storePhone?: string;
+    storeCity?: string;
+    isActive?: boolean;
+    storeImg?: string;
+    storeImgThumb?: string;
+    longitude?: Types.Decimal128;
+    latitude?: Types.Decimal128;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 const storesSchema = new Schema <IStores> ({
@@ -54,6 +56,10 @@ const storesSchema = new Schema <IStores> ({
         type: String,
         description: "city in which store is",
         index: 0,
+    },
+    storePhone: {
+        type: String,
+        description: "store contact number",
     },
     storeImg: {
         type: String,

@@ -1,20 +1,9 @@
 import { Types } from 'mongoose';
-import * as fs from 'fs';
 import Constant from '../constant/constant';
+import ControllerHelper from '../helpers/controllerHelper';
 import { IProducts } from "../models/products.model";
 import productService from "../services/productsService";
 import { getOffset, logInConsole } from '../utils/utils';
-import config from '../../config';
-import ImageKitHelper from '../helpers/imageKitHelper';
-const ImageKit = require("imagekit");
-
-const CONFIG_OPTIONS = {
-    publicKey: process.env.publicKeyImageKit,
-    privateKey: process.env.privateKeyImageKit,
-    urlEndpoint: config.imageKit.url,
-};
-
-const imageKit = new ImageKit(CONFIG_OPTIONS);
 
 export const createProduct = async (request: any, response: any, next: any) => {
     try {
@@ -24,13 +13,12 @@ export const createProduct = async (request: any, response: any, next: any) => {
         
         const storeIds: Types.ObjectId[] = requestBody.storeId ? requestBody.storeId.split(',') : [];
 
-        console.info({storeIds});
         for (const storeId of storeIds) {
             let finalImageUrl: string = '';
             let finalImageThumbUrl: string = '';
 
             if (file) {
-                const imagePaths: IUploadImage = await uploadImage(request, `uploads/products/${storeId}`);
+                const imagePaths: IUploadImage = await ControllerHelper.uploadImage(request, `uploads/products/${storeId}`);
                 finalImageUrl = imagePaths.finalImageUrl;
                 finalImageThumbUrl = imagePaths.finalImageThumbUrl;
             }
@@ -128,7 +116,7 @@ export const updateProduct = async (request: any, response: any, next: any) => {
         let finalImageThumbUrl: string = '';
 
         if (request.files) {
-            const imagePaths: IUploadImage = await uploadImage(request, `uploads/products/${requestBody.storeId}`);
+            const imagePaths: IUploadImage = await ControllerHelper.uploadImage(request, `uploads/products/${requestBody.storeId}`);
             console.info({imagePaths});
             finalImageUrl = imagePaths.finalImageUrl;
             finalImageThumbUrl = imagePaths.finalImageThumbUrl;
@@ -160,41 +148,6 @@ export const updateProduct = async (request: any, response: any, next: any) => {
         console.error(err);
         next(err);
     }
-}
-
-const uploadImage = async (request: any, folderToCreate: string): Promise<IUploadImage> => {
-    const file: any = request.files;
-    let finalImageUrl: string = '';
-    let finalImageThumbUrl: string = '';
-
-    if (file) {
-        const fullFileName: string[] = file && file.imgFile ? file.imgFile.name.split('.') : [];
-
-        const imgName: string = fullFileName[0] || '';
-        const extn: string = fullFileName[fullFileName?.length - 1] || '';
-
-        //reading image file from temp folder
-        const imgDataStream = fs.createReadStream(String(file.imgFile.tempFilePath));
-
-        //final new image name 
-        const newImgName: string = `${imgName.toLowerCase()}_${new Date().getTime()}.${extn}`;
-
-        //path on which image will be written
-        //const folderToCreate: string = `uploads/products/${storeId}`;
-
-        const response = await ImageKitHelper.uploadImage({ 
-            imageKitInstance: imageKit, file: imgDataStream, fileName: newImgName, folder: folderToCreate 
-        });
-        
-        console.info(response);
-
-        if (response) {
-            finalImageUrl = response.url;
-            finalImageThumbUrl = response.thumbnailUrl;
-        }
-    }
-
-    return { finalImageUrl, finalImageThumbUrl };
 }
 
 export const searchProducts = async (request: any, response: any, next: any) => {
