@@ -97,15 +97,35 @@ export const getAllStoresUnassigned = async (request, response, next) => {
     }
 }
 
-export const updateStoreData = async(request,response,next) => {
-    try{
-         
-        const requestBodyData :any = request.swagger.params.body.value;
+export const updateStoreData = async(request, response, next) => {
+    try {
+        const requestBody: any = request.body;
+        const file: any = request.files;
+        const storeId: Types.ObjectId = requestBody.id;
+        logInConsole(requestBody);
+
+        
+        
         let bodyData = {
-            ...requestBodyData,
+            ...requestBody,
         }
         let data = JSON.parse(JSON.stringify(bodyData));
-        const updateData = await storesService.updateStoreByQuery(data,{_id:data.id});
+
+
+        if (file) {        
+            let finalImageUrl: string = '';
+            let finalImageThumbUrl: string = '';    
+            const imagePaths: IUploadImage = 
+                await ControllerHelper.uploadImage(request, `uploads/stores/${storeId}`);
+            finalImageUrl = imagePaths.finalImageUrl;
+            finalImageThumbUrl = imagePaths.finalImageThumbUrl;
+
+            data.storeImg = finalImageUrl;
+            data.storeImgThumb = finalImageThumbUrl;
+        }
+
+        delete data.id
+        const updateData = await storesService.updateStoreByQuery(data, {_id: storeId});
         return response.status(200).send({success:true, data :updateData})
 
     } catch(err){
