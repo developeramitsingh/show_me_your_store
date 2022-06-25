@@ -47,6 +47,23 @@ export const getAllStoreData = async (request, response, next) => {
     }
 }
 
+export const getAllStoresUnassigned = async (request, response, next) => {
+    try {
+        console.info(`getAllStoresUnassigned called...`);
+        let query: any = request.swagger.params.query.value;
+        query = JSON.parse(query);
+
+        const getAllStoreData: IStores[] | any = 
+            await storesService.getAllStoresUnassignedByQuery(query);        
+
+        return response.status(200).send({ success: true, data: getAllStoreData });
+
+    } catch(err){
+        console.error('error in getAllStoresUnassigned ->' ,err);
+        next(err);
+    }
+}
+
 export const updateStoreData = async(request,response,next) => {
     try{
          

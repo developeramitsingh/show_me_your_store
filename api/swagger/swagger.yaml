@@ -229,6 +229,29 @@ paths:
             description: Error
             schema:
               $ref: "#/definitions/Error"
+  /store-unassigned:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: stores.controller
+    get:
+      description: get all stores list not assigned to any user
+      operationId: getAllStoresUnassigned
+      security:
+       - allowAllRoles: []
+      parameters:
+        - name: query
+          in: query
+          type: string
+      responses:
+        "200":
+          description: Success get all stores list
+          schema:
+            # a pointer to a definition
+            type: object
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
   /store:
     # binds a127 app logic to a route
     x-swagger-router-controller: stores.controller

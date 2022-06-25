@@ -1,5 +1,7 @@
 import { IStores, Stores } from "../models/stores.model";
 import {Types} from "mongoose";
+import { logInConsole } from "../utils/utils";
+import { IUsers, Users } from "../models/users.model";
 
 class StoresService {
     private constructor () {}
@@ -38,7 +40,21 @@ class StoresService {
         try {
             return await Stores.find(query, attrib).exec();
         } catch (err) {
-            console.error(`error in updateStoreByQuery: ${err}`);
+            console.error(`error in getAllStoreByQuery: ${err}`);
+        }
+    }
+
+    public async getAllStoresUnassignedByQuery(query: any, attrib?: string | string[]): Promise<IStores[] | any>{
+        try {
+            const users: IUsers[] = await Users.find({}, ['stores']);
+            const storeIdsExists: any[] = users.map(user => user.stores || []);
+            
+            const unAssignedStoreIds: Types.ObjectId[] = [...new Set([].concat(...storeIdsExists))];
+
+            query._id = { $nin: unAssignedStoreIds };
+            return await Stores.find(query, attrib).exec();
+        } catch (err) {
+            console.error(`error in getAllStoresUnassignedByQuery: ${err}`);
         }
     }
 
