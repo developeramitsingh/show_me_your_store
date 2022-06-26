@@ -4,7 +4,6 @@ import {Types} from "mongoose";
 import { IStores } from "../models/stores.model";
 import config from '../../config';
 
-import ImageKitHelper from '../helpers/imageKitHelper';
 import ControllerHelper from "../helpers/controllerHelper";
 const ImageKit = require("imagekit");
 
@@ -17,6 +16,7 @@ const CONFIG_OPTIONS = {
 const imageKit = new ImageKit(CONFIG_OPTIONS);
 
 export const createStore = async (request, response, next) => {
+    console.info(`Create Store called`);
     const requestBody: any = request.body;
     const file: any = request.files;
     logInConsole(requestBody);
@@ -29,8 +29,9 @@ export const createStore = async (request, response, next) => {
         data = JSON.parse(JSON.stringify(data));
 
         delete data._id;
+        logInConsole(data);
         const newStore = await storesService.createStore(data);
-        console.info(`Store created`);
+        console.info(`new Store created`);
 
         const storeId: Types.ObjectId = newStore?._id;
         let finalImageUrl: string = '';
@@ -46,6 +47,8 @@ export const createStore = async (request, response, next) => {
                 storeImg: finalImageUrl,
                 storeImgThumb: finalImageThumbUrl,
             }
+
+            console.info({imageUpdate});
 
             await storesService.updateStoreByQuery(imageUpdate, { _id: storeId });
             console.info(`store image updated: ${storeId}`);
@@ -99,10 +102,11 @@ export const getAllStoresUnassigned = async (request, response, next) => {
 
 export const updateStoreData = async(request, response, next) => {
     try {
+        console.info(`update store data called`);
         const requestBody: any = request.body;
         const file: any = request.files;
-        const storeId: Types.ObjectId = requestBody.id;
-        logInConsole(requestBody);
+        const storeId: Types.ObjectId = requestBody._id;
+        logInConsole(storeId);
 
         
         
@@ -120,9 +124,15 @@ export const updateStoreData = async(request, response, next) => {
             finalImageUrl = imagePaths.finalImageUrl;
             finalImageThumbUrl = imagePaths.finalImageThumbUrl;
 
+            console.info({finalImageUrl});
+
+            console.info({finalImageThumbUrl});
+
             data.storeImg = finalImageUrl;
             data.storeImgThumb = finalImageThumbUrl;
         }
+
+        console.info({data});
 
         delete data.id
         const updateData = await storesService.updateStoreByQuery(data, {_id: storeId});

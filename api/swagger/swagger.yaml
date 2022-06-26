@@ -304,13 +304,6 @@ paths:
       operationId: updateStoreData
       security:
         - allowOnlySAAndCA: []
-      parameters:
-        - in: body
-          name: body
-          description: update store details.
-          required: true
-          schema:
-            $ref: "#/definitions/StorePutRequest"
       responses:
         "201":
           description: Success creation

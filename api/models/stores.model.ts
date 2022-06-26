@@ -5,7 +5,7 @@ export interface IStores {
     storeType?: string;
     storeCategory?: string;
     storeAddress?: string;
-    storePincode?: number;
+    storePinCode?: number;
     storeState?: string;
     storePhone?: string;
     storeCity?: string;
@@ -40,11 +40,10 @@ const storesSchema = new Schema <IStores> ({
         type: String,
         description: "store's complete address", 
     },
-    storePincode: {
+    storePinCode: {
         type: Number,
         description: "pin code of store area",
         index: 0,
-        
     },
     storeState: {
         type: String,
@@ -64,6 +63,10 @@ const storesSchema = new Schema <IStores> ({
     storeImg: {
         type: String,
         description: "store actual image",
+    },
+    storeImgThumb: {
+        type: String,
+        description: "store actual thumbnail image",
     },
     isActive: {
         type: Boolean,
